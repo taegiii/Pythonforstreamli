@@ -15,3 +15,11 @@ def get_gps_list(bstop_name) :
 
     return gps_list
 
+def find_bstop_by_gps(gpsy, gpsx) :
+    filtered_data = Busan_bus_data[(Busan_bus_data['gpsy']==gpsy) & (Busan_bus_data['gpsx']==gpsx)]
+
+    bstop_id = filtered_data.iloc[0,1]
+
+    return bstop_id
+
+

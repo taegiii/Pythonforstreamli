@@ -4,28 +4,6 @@ import xmltodict
 import streamlit as st
 
 key = 'xGzPl%2BpHZ%2BQsevCT%2FWyI4ryEPHeNHW5CEWmg83w2RgP%2F1rqZ7fhRVEF9a0Y8nSLeQ9JYuNZk8orw6Uy2hQEQTQ%3D%3D'
-
-def get_bus_arrival_info(id):
-    response = requests.get(f"http://apis.data.go.kr/6260000/BusanBIMS/stopArrByBstopid?serviceKey={key}&Bstopid={id}")
-
-    if response.status_code != 200:
-        print("API 호출 실패: ", response.status_code)
-        return None, None
-    
-    xml = response.text
-    root = BeautifulSoup(xml, 'xml')
-
-    bus_number = root.find_all('lineno')
-    #left_station = root.find_all('station1')
-
-    if not bus_number:
-        print("데이터를 찾을 수 없습니다.")
-        return None, None
-
-    for num in bus_number:
-        print(f"버스 번호: {num.text}")
-
-    return bus_number
     
 def get_bus_info_by_num(bus_num) :
 
@@ -47,3 +25,28 @@ def get_bus_info_by_num(bus_num) :
     }
     
     return info
+
+def get_info_by_id(bstop_id):
+    
+    response = requests.get(f"http://apis.data.go.kr/6260000/BusanBIMS/stopArrByBstopid?serviceKey={key}&bstopid={bstop_id}")
+
+    if response.status_code != 200:
+        st.write("정보를 불러오는데 실패했습니다. 호출코드 :",response.status_code)
+        return None
+    
+    xml = response.text
+    root = BeautifulSoup(xml, 'xml')
+
+    busNum = root.find_all('lineno')
+    left_time_1 = root.find_all('min1')
+    left_bstop_1 = root.find_all('station1')
+
+    for num, time, stop in zip(busNum, left_time_1, left_bstop_1) :
+        st.divider()
+        st.write(f"버스 번호 : {num.text}")
+        st.write(f"{time.text}분 후 도착예정")
+        st.write(f"버스가 {stop.text}정거장 전에 있습니다.")
+        st.divider()
+
+
+    
