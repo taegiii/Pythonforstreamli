@@ -14,7 +14,7 @@ def get_bus_info_by_num(bus_num) :
         return None
     
     xml = response.text
-    root = BeautifulSoup(xml, 'xml')
+    root = BeautifulSoup(xml, 'lxml')
 
     info = {
         'start_point' : root.find('startpoint'),
@@ -35,7 +35,7 @@ def get_info_by_id(bstop_id):
         return None
     
     xml = response.text
-    root = BeautifulSoup(xml, 'xml')
+    root = BeautifulSoup(xml, 'lxml')
 
     busNum = root.find_all('lineno')
     left_time_1 = root.find_all('min1')

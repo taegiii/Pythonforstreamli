@@ -7,3 +7,4 @@ streamlit_folium
 bs4
 xmltodict
 dbfread
+lxml
