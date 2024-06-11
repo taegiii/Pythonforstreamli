@@ -9,7 +9,6 @@ import data
 
 import requests
 from bs4 import BeautifulSoup
-import json
 import xmltodict #여기는 API서버에서 불러오고 데이터를 처리하는데 필요한 모듈
 
 from func import get_bus_arrival_info
