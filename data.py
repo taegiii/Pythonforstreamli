@@ -16,7 +16,7 @@ Busan_bus_data_name = np.array(Busan_bus_data['bstopnm'].unique())
 def get_gps_list(bstop_name) :
     filtered_data = Busan_bus_data[Busan_bus_data['bstopnm']==bstop_name]
 
-    gps_list = np.array(filtered_data[['gpsx', 'gpsy']])
+    gps_list = np.array(filtered_data[['gpsx', 'gpsy']].values)
 
     return gps_list
 ###########
@@ -31,39 +31,28 @@ def find_bstop_by_gps(gpsy, gpsx) :
 ###########
 
 ###########
-def to_map_line(list, bus_num) :
+def to_map_pin(list, bus_num) :
 
-    gps_list = []
-    name_list = []
+    gps_list1 = [] #정류장에 핀꽂을때 사용하는 gps
 
     for content in list :
 
-        if not content.arsno or not content.arsno.text:
-            continue  #arsno가 없을때도 있기에
-
-        filtered_data = Busan_bus_data[Busan_bus_data['arsno'] == content.arsno.text]
-
-        name_list.append(filtered_data['bstopnm'].values)
-
-        gps_info = filtered_data[['gpsy', 'gpsx']].values
-
-        for info in gps_info:
-            gps_list.append(info)
+        if not content.bstopnm or not content.bstopnm.text:
+            continue  #arsno가 없을때도 있어서 그걸 처리하기 위해서
+        
+        gps_data = get_gps_list(content.bstopnm.text)
             
 
-    gps = np.array(gps_list)
+        for [x, y] in gps_data :
+            gps_list1.append([y, x])
     
-    m = folium.Map(location=[gps[0][0], gps[0][1]], zoom_start=15)
+    gps_list1 = np.array(gps_list1)
+    
+    m = folium.Map(location=[gps_list1[0][0], gps_list1[0][1]], zoom_start=15)
 
-    for [y, x], name in zip(gps, name_list) :
+    for [y, x] in gps_list1 :
 
-        folium.Marker([y,x], tooltips=f"{bus_num}번 정류장", popup=f"{name}").add_to(m)
-
-    folium.PolyLine(locations=gps,
-                    color='blue',
-                    weight=5,
-                    opacity=0.7,
-                    tooltips=f'{bus_num}노선도').add_to(m)
+        folium.Marker([y,x], tooltips=f"{bus_num}번 정류장", popup="").add_to(m)
         
     st_folium(m, width=700, height=500)
 
